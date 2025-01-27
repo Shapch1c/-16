@@ -1,0 +1,70 @@
+{% extends 'default.html'%}
+{% load custom_filters %}
+{% load censor_filters %}
+{% load custom_tags %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>News</title>
+</head>
+<body>
+{% block content %}
+    <div style="margin: 20px;"> <!-- Обернул все содержимое в блок с отступами -->
+        <h1>Все новости</h1>
+        {# Добавляем форму, которая объединяет набор полей, которые будут отправляться в запросе #}
+        <form action="" method="get" style="margin-bottom: 20px;"> <!-- Отступ между формой и таблицей -->
+            {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+            {{ filterset.form.as_p }}
+            {# Добавим кнопку отправки данных формы #}
+            <input type="submit" value="Найти" />
+        </form>
+        <button style="margin-top: 10px"> <a href="/news/categorys/"> Список категорий</a> </button>
+        <button style="margin-top: 10px"> <a href="/news/create/"> Сделать пост</a> </button>
+        <table width="100%" border="1" cellspacing="0" cellpadding="10">
+            <thead>
+                <tr>
+                    <th width="20%">Категория</th>
+                    <th width="20%">Заголовок</th>
+                    <th width="20%">Дата публикации</th>
+                    <th width="20%">Содержание</th>
+                    <th width="20%">Тип публикации</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>
+                        {% for category in post.category.all %}
+                            {{ category.name }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.post_time }}</td>
+                    <td>{{ post.text|truncatechars:21|censor }}</td>
+                    <td>{{ post.get_post_type_display }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        {# Пагинация #}
+        {% if page_obj.has_previous %}
+            <a href="?{% url_replace page=1 %}">1</a>
+            {% if page_obj.previous_page_number != 1 %}
+                ...
+                <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+            {% endif %}
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+            {% if paginator.num_pages != page_obj.next_page_number %}
+                ...
+                <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock content %}
+</body>

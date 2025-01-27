@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый пост</title>
+</head>
+<body>
+    <h1>Новый пост в категории(ях): {{ categories|join:', ' }}</h1>
+    <p><strong>Заголовок:</strong> {{ post.title }}</p>
+    <p><strong>Описание:</strong> {{ post.preview }}</p>
+    <p>
+        <a href="http://127.0.0.1:8000{{ post.get_absolute_url }}">Читать пост</a>
+    </p>
+</body>
+</html>

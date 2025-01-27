@@ -1,0 +1,24 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+  <h2>Unsubscribe from {{ category.name }}</h2>
+
+  {% if category.subscribers.filter(id=request.user.id).exists %}
+    <form method="post" action="{% url 'unsubscribe_from_category' category.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Unsubscribe</button>
+    </form>
+  {% else %}
+    <p>Ты не подписан на эту категорию</p>
+  {% endif %}
+
+  <hr>
+
+  <h3>Subscribers:</h3>
+  <ul>
+    {% for user in category.subscribers.all %}
+      <li>{{ user.username }}</li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
